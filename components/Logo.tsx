@@ -1,10 +1,11 @@
 import Image from "next/image";
+import { withBasePath } from "@/lib/basePath";
 
 export default function Logo({ className = "" }: { className?: string }) {
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
       <Image
-        src="/logo-mark.png"
+        src={withBasePath("/logo-mark.png")}
         alt=""
         width={44}
         height={33}

@@ -1,0 +1,62 @@
+name: Deploy to GitHub Pages
+
+# Static preview mirror only. The real site lives on the VPS at
+# alemecohub.kz; this publishes the same code as a static export at
+# https://alemecohub.github.io/landing-alem-auto-hub/ for review. Middleware
+# and the lead API route can't run without a server, so they're excluded from
+# this build only — the checked-in source is untouched.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Exclude server-only features from the static export
+        run: |
+          mv middleware.ts middleware.ts.disabled
+          mv app/api app/api.disabled
+          mv app/manifest.ts app/manifest.ts.disabled
+
+      - name: Build static export
+        run: npm run build:pages
+
+      - name: Serve the RU homepage at the bare project root
+        run: cp out/ru/index.html out/index.html
+
+      - name: Prevent Jekyll from mangling _next
+        run: touch out/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

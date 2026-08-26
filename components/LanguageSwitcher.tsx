@@ -3,6 +3,7 @@
 import { useI18n } from "./I18nProvider";
 import { LOCALES, LOCALE_COOKIE, LOCALE_META } from "@/lib/i18n";
 import { track } from "@/lib/analytics";
+import { withBasePath } from "@/lib/basePath";
 
 // Real links (so both languages stay crawlable) that also remember the choice
 // for the next visit to the bare domain.
@@ -24,7 +25,7 @@ export default function LanguageSwitcher({
         return (
           <a
             key={code}
-            href={`/${code}`}
+            href={withBasePath(`/${code}`)}
             hrefLang={code}
             aria-current={active ? "true" : undefined}
             onClick={() => {

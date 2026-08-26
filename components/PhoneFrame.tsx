@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { withBasePath } from "@/lib/basePath";
 
 // One device frame for every screenshot on the page: the same width, the same
 // corner radius and the same 390x844 screen ratio, so the mockups read as one
@@ -21,7 +22,7 @@ export default function PhoneFrame({
       <div className="relative rounded-[2.25rem] border border-white/10 bg-[#111] p-2 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.85)] sm:rounded-[2.6rem] sm:p-2.5">
         <div className="relative aspect-[390/844] overflow-hidden rounded-[1.85rem] bg-[#0d0d0d] sm:rounded-[2.2rem]">
           <Image
-            src={src}
+            src={withBasePath(src)}
             alt={alt}
             fill
             priority={priority}

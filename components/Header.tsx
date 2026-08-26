@@ -7,6 +7,7 @@ import { MenuIcon, CloseIcon } from "./Icons";
 import { useLeadModal } from "./ModalProvider";
 import { useI18n } from "./I18nProvider";
 import { track } from "@/lib/analytics";
+import { withBasePath } from "@/lib/basePath";
 
 export default function Header() {
   const { open } = useLeadModal();
@@ -31,7 +32,9 @@ export default function Header() {
 
   // Nav entries are stored as plain paths; every link needs the /ru or /kk prefix.
   const localeHref = (href: string) =>
-    href.startsWith("/") ? `/${locale}${href === "/" ? "" : href}` : href;
+    href.startsWith("/")
+      ? withBasePath(`/${locale}${href === "/" ? "" : href}`)
+      : href;
 
   const handleCta = (location: string) => {
     track("cta_early_access_click", { location, locale });
@@ -47,7 +50,7 @@ export default function Header() {
       }`}
     >
       <div className="container-x flex h-[68px] items-center justify-between gap-3">
-        <a href={`/${locale}`} aria-label={t.common.home} className="shrink-0">
+        <a href={withBasePath(`/${locale}`)} aria-label={t.common.home} className="shrink-0">
           <Logo />
         </a>
 

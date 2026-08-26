@@ -3,6 +3,7 @@
 import { useI18n } from "./I18nProvider";
 import Reveal from "./Reveal";
 import { ArrowRight } from "./Icons";
+import { withBasePath } from "@/lib/basePath";
 
 type Key = "drivers" | "business" | "partners";
 
@@ -64,7 +65,7 @@ export default function AudienceChapter({ audience }: { audience: Key }) {
             </div>
 
             <a
-              href={`/${locale}${chapter.href}`}
+              href={withBasePath(`/${locale}${chapter.href}`)}
               className="btn-ghost shrink-0 self-start lg:self-auto"
             >
               {chapter.cta}

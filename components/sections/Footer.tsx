@@ -6,12 +6,15 @@ import { InstagramIcon, WhatsAppIcon } from "../Icons";
 import { BRAND } from "@/lib/content";
 import { useI18n } from "../I18nProvider";
 import { track } from "@/lib/analytics";
+import { withBasePath } from "@/lib/basePath";
 
 export default function Footer() {
   const { locale, t } = useI18n();
 
   const localeHref = (href: string) =>
-    href.startsWith("/") ? `/${locale}${href === "/" ? "" : href}` : href;
+    href.startsWith("/")
+      ? withBasePath(`/${locale}${href === "/" ? "" : href}`)
+      : href;
 
   return (
     <footer
@@ -97,7 +100,7 @@ export default function Footer() {
           </p>
           <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-end">
             <a
-              href={`/${locale}/privacy`}
+              href={withBasePath(`/${locale}/privacy`)}
               className="transition-colors hover:text-white"
             >
               {t.footer.privacy}
