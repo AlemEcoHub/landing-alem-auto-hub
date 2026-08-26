@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+Dockerfile
+.dockerignore
+README.md
+scripts
+components/img
+public/logo-source.png

@@ -1,0 +1,575 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand: #e8431e;
+  --brand-light: #ff8c00;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 76px;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: -0.018em;
+}
+
+body {
+  background-color: #0a0a0a;
+  color: #ededed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-container px-5 sm:px-6 lg:px-8;
+  }
+
+  .glass {
+    @apply rounded-2xl border border-border bg-card/60 backdrop-blur-sm;
+  }
+
+  .glass-hover {
+    @apply transition-all duration-300 hover:border-white/15 hover:bg-card;
+  }
+
+  /* No whitespace-nowrap: Kazakh labels are noticeably longer than the
+     Russian ones and have to be allowed to wrap instead of overflowing. */
+  .btn {
+    @apply inline-flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-3 text-center text-sm font-semibold leading-snug transition-all duration-200 sm:px-6;
+  }
+
+  .btn-primary {
+    @apply btn text-white;
+    background-image: linear-gradient(120deg, #e8431e, #ff8c00);
+    box-shadow: 0 8px 30px -8px rgba(232, 67, 30, 0.6);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 10px 40px -6px rgba(232, 67, 30, 0.8);
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    @apply btn border border-white/15 bg-white/[0.03] text-white hover:bg-white/[0.08] hover:border-white/25;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-border bg-white/[0.03] px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-wider text-muted sm:text-xs;
+  }
+
+  .section {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  .heading {
+    @apply text-balance text-[1.75rem] font-bold leading-[1.12] sm:text-[2.35rem] lg:text-[2.6rem];
+  }
+
+  .grad-text {
+    background-image: linear-gradient(120deg, #ff8c00, #e8431e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* Ambient grid + glow helpers */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.glow-brand {
+  background: radial-gradient(circle, rgba(232, 67, 30, 0.28), transparent 65%);
+}
+
+/* Road markings used as a section divider. */
+.section-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08) 18%,
+    rgba(255, 255, 255, 0.08) 82%,
+    transparent
+  );
+}
+.section-divider::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 132px;
+  height: 3px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ff8c00 0 16px,
+    transparent 16px 30px
+  );
+  opacity: 0.5;
+}
+
+/* Mobile: the sticky action bar sits on top of the page, so the last section
+   needs room underneath it. */
+.pb-action-bar {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 640px) {
+  .pb-action-bar {
+    padding-bottom: 0;
+  }
+}
+
+/* iOS zooms the page in when a focused input renders below 16px. */
+@supports (-webkit-touch-callout: none) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+
+/* ==========================================================================
+   Motion kit — one animation per section, each fired once on scroll-in.
+   Component logic lives in components/motion/*.
+   ========================================================================== */
+
+:root {
+  --brake: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 01 — instrument needle -------------------------------------------------- */
+.gauge-needle {
+  transform-origin: 100px 100px;
+  transform: rotate(-90deg);
+}
+.gauge-needle.is-swept {
+  animation: needle-sweep 1.5s var(--brake) forwards;
+}
+@keyframes needle-sweep {
+  0% { transform: rotate(-90deg); }
+  62% { transform: rotate(calc(var(--rest) + 14deg)); }
+  100% { transform: rotate(var(--rest)); }
+}
+
+/* 02 — odometer reels ----------------------------------------------------- */
+.odo-reel {
+  height: 2.5rem;
+  width: 1.7rem;
+  overflow: hidden;
+  border-radius: 0.3rem;
+  border: 1px solid theme('colors.border');
+  background: #08080a;
+  box-shadow: inset 0 6px 10px -8px #000, inset 0 -6px 10px -8px #000;
+}
+.odo-reel-trip {
+  background: linear-gradient(180deg, #e8431e, #c8330f);
+  border-color: #e8431e;
+}
+.odo-strip {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display), system-ui, sans-serif;
+  transform: translateY(0);
+  transition: transform 1.9s var(--brake);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1;
+  color: #fff;
+}
+.odo-strip > span {
+  display: grid;
+  place-items: center;
+  height: 2.5rem;
+  flex: 0 0 2.5rem;
+}
+
+/* 03 — hero car outline draws itself -------------------------------------- */
+.car-stroke {
+  fill: none;
+  stroke: rgba(255, 140, 0, 0.55);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-dasharray: 1900;
+  stroke-dashoffset: 1900;
+}
+.is-drawn .car-stroke { animation: car-draw 2.2s var(--brake) forwards; }
+@keyframes car-draw { to { stroke-dashoffset: 0; } }
+
+.car-fill { fill: rgba(255, 255, 255, 0.028); opacity: 0; }
+.car-glass { fill: rgba(255, 255, 255, 0.05); opacity: 0; }
+.is-drawn .car-fill { animation: car-fade 0.8s ease 1.7s forwards; }
+.is-drawn .car-glass { animation: car-fade 0.8s ease 1.9s forwards; }
+@keyframes car-fade { to { opacity: 1; } }
+
+.car-tyre { fill: rgba(10, 10, 12, 0.6); stroke: rgba(255, 140, 0, 0.3); stroke-width: 1.6; }
+.car-rim { fill: none; stroke: rgba(255, 140, 0, 0.22); stroke-width: 2.4; }
+.is-drawn .car-wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: car-roll 2.2s var(--brake) forwards;
+}
+@keyframes car-roll { to { transform: rotate(540deg); } }
+
+/* 04 — Auto Box diagnostic scan ------------------------------------------- */
+.scan-sweep { opacity: 0; }
+.is-scanning .scan-sweep { animation: scan-move 2.2s cubic-bezier(0.5, 0, 0.5, 1) forwards; }
+@keyframes scan-move {
+  0% { opacity: 0; transform: translateX(-40px); }
+  10%, 90% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(360px); }
+}
+.scan-pin {
+  opacity: 0;
+  transform: scale(0.4);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.is-scanning .scan-pin { animation: scan-pop 0.5s var(--brake) forwards; }
+@keyframes scan-pop { to { opacity: 1; transform: scale(1); } }
+.scan-label { font-size: 10.5px; font-weight: 500; }
+
+/* 05 — headlight sweep across a heading ----------------------------------- */
+/* inline-block so the box hugs a short heading and the beam never travels far
+   past the words. */
+.headlight {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  /* keeps the light inside the heading instead of drifting across the page */
+  overflow: hidden;
+}
+.headlight.is-lit .headlight-base { opacity: 0.2; }
+
+.headlight-lit {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  --beam: linear-gradient(
+    90deg,
+    #000 0 40%,
+    rgba(0, 0, 0, 0.82) 49%,
+    rgba(0, 0, 0, 0.18) 60%,
+    transparent 72%
+  );
+  -webkit-mask-image: var(--beam);
+  mask-image: var(--beam);
+  -webkit-mask-size: 250% 100%;
+  mask-size: 250% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+  animation: headlight-sweep 1.6s cubic-bezier(0.37, 0, 0.2, 1) forwards;
+}
+/* Warmth is carried by the animation, not by a permanent shadow, so the
+   heading ends up looking exactly like an ordinary heading. */
+@keyframes headlight-sweep {
+  0% {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+    filter: brightness(1.5) saturate(1.08);
+  }
+  85% { filter: brightness(1.08) saturate(1.02); }
+  100% {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+    filter: none;
+  }
+}
+
+/* The warm highlight is a third copy of the text under a narrow moving window,
+   so light only ever lands on the letters — never on the background. */
+.headlight-hot {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  color: #ffe6bd;
+  --window: linear-gradient(
+    90deg,
+    transparent 0 42%,
+    rgba(0, 0, 0, 0.55) 47%,
+    #000 50%,
+    rgba(0, 0, 0, 0.55) 53%,
+    transparent 58%
+  );
+  -webkit-mask-image: var(--window);
+  mask-image: var(--window);
+  -webkit-mask-size: 250% 100%;
+  mask-size: 250% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+  animation: headlight-sweep 1.6s cubic-bezier(0.37, 0, 0.2, 1) forwards;
+}
+.headlight-hot .grad-text {
+  /* the highlight should wash over the gradient words too */
+  background-image: none;
+  color: #ffe6bd;
+  -webkit-text-fill-color: #ffe6bd;
+}
+
+/* 06 — road in the left gutter with a car driving down it ------------------ */
+.road {
+  width: 46px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0d0d10, #121216 20%, #121216 80%, #0d0d10);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 3%, #000 97%, transparent);
+}
+.road-markings {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  margin-left: -1.5px;
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.3) 0 20px,
+    transparent 20px 54px
+  );
+  /* A repeating background tiles forever, so the markings never run out
+     however far the page is scrolled. */
+  background-position: 0 var(--markings, 0px);
+}
+.road-car {
+  /* Travels between 5% and 91% so it never sits in the faded ends of the road. */
+  position: absolute;
+  left: 50%;
+  top: calc(5% + var(--drive, 0) * 86%);
+  translate: -50% 0;
+  display: block;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.7))
+    drop-shadow(0 -10px 22px rgba(255, 200, 140, 0.18));
+}
+
+/* 07 — service-book stamp -------------------------------------------------- */
+.stamp-badge { opacity: 0; }
+.stamp-badge.is-stamped { animation: stamp-down 0.6s var(--brake) 0.25s forwards; }
+@keyframes stamp-down {
+  0% { opacity: 0; transform: scale(1.9) rotate(-14deg); filter: blur(4px); }
+  70% { opacity: 1; transform: scale(0.96) rotate(1.5deg); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0); }
+}
+.stamp-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 999px;
+  border: 1.5px solid theme('colors.accent.green');
+  opacity: 0;
+}
+.is-stamped .stamp-ring { animation: stamp-ping 0.9s ease-out 0.7s forwards; }
+@keyframes stamp-ping {
+  0% { opacity: 0.7; transform: scale(0.85); }
+  100% { opacity: 0; transform: scale(1.7); }
+}
+
+/* 08 — dashboard warning lamps -------------------------------------------- */
+.lamp {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid theme('colors.border');
+  background: #0a0a0d;
+  color: #2e2e36;
+}
+.is-alerting .lamp { animation: lamp-cycle 3.6s var(--brake) forwards; }
+@keyframes lamp-cycle {
+  0%, 6% { color: #2e2e36; border-color: #1f1f1f; background: #0a0a0d; }
+  12% { color: #f59e0b; border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.1); }
+  20% { color: #2e2e36; }
+  28% { color: #f59e0b; }
+  36% { color: #2e2e36; }
+  46% { color: #e8431e; border-color: rgba(232, 67, 30, 0.5); background: rgba(232, 67, 30, 0.1); }
+  62% { color: #e8431e; }
+  78%, 100% { color: #22c55e; border-color: rgba(34, 197, 94, 0.45); background: rgba(34, 197, 94, 0.1); }
+}
+.lamp-status {
+  /* Both states share one grid cell so the line can wrap on a phone without
+     the two of them pushing each other around. */
+  grid-area: 1 / 1;
+}
+.lamp-status-bad { color: theme('colors.accent.amber'); }
+.lamp-status-good { color: theme('colors.accent.green'); opacity: 0; }
+.is-alerting .lamp-status-bad { animation: status-out 3.6s linear forwards; }
+.is-alerting .lamp-status-good { animation: status-in 3.6s linear forwards; }
+@keyframes status-out { 0%, 68% { opacity: 1; } 74%, 100% { opacity: 0; } }
+@keyframes status-in { 0%, 74% { opacity: 0; } 82%, 100% { opacity: 1; } }
+
+/* Экосистема: спидометр. Шкала с делениями, стрелка идёт по стадиям цикла. */
+.dial-base { fill: none; stroke: #1f1f26; stroke-width: 12; stroke-linecap: round; }
+.dial-fill {
+  fill: none;
+  stroke: url(#dialFill);
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.55s var(--brake);
+}
+.dial-tick { stroke: #33333c; stroke-width: 2; stroke-linecap: round; }
+.dial-tick-major { stroke: #4a4a55; stroke-width: 3; }
+
+.dial-node {
+  fill: #14141a;
+  stroke: #3a3a44;
+  stroke-width: 2;
+  transition: stroke 0.35s ease, fill 0.35s ease;
+}
+.dial-node.is-on { stroke: #ff8c00; fill: #2a1608; }
+
+.dial-num {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  fill: #6c6c78;
+  transition: fill 0.35s ease;
+}
+.dial-num.is-on { fill: #ff8c00; }
+
+.dial-label {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 12px;
+  fill: #8e8e98;
+  transition: fill 0.35s ease;
+}
+.dial-label.is-on { fill: #fff; }
+/* На узком экране подписи по кругу превращаются в нечитаемую мелочь —
+   там их заменяет список под прибором. */
+@media (max-width: 639px) {
+  .dial-label { display: none; }
+}
+
+.dial-needle {
+  transform-origin: 320px 228px;
+  transition: transform 0.62s var(--brake);
+}
+.dial-hub { fill: #141419; stroke: #e8431e; stroke-width: 2; }
+
+.dial-caption {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 11px;
+  fill: #5c5c64;
+  letter-spacing: 0.16em;
+}
+.dial-readout {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  fill: #fff;
+}
+
+/* Светофор: одна строка автомобиля меняет состояние. */
+.status-rail { background: #e8431e; transition: background 0.4s ease; }
+.is-shifting .status-rail { animation: rail-shift 3s ease forwards; }
+@keyframes rail-shift {
+  0%, 45% { background: #e8431e; }
+  70%, 100% { background: #22c55e; }
+}
+.status-stage { grid-area: 1 / 1; }
+.status-mid, .status-ok { opacity: 0; }
+.is-shifting .status-bad { animation: stage-out 3s linear forwards; }
+.is-shifting .status-mid { animation: stage-mid 3s linear forwards; }
+.is-shifting .status-ok { animation: stage-in 3s linear forwards; }
+@keyframes stage-out { 0%, 40% { opacity: 1; } 46%, 100% { opacity: 0; } }
+@keyframes stage-mid { 0%, 46% { opacity: 0; } 52%, 62% { opacity: 1; } 68%, 100% { opacity: 0; } }
+@keyframes stage-in { 0%, 68% { opacity: 0; } 76%, 100% { opacity: 1; } }
+
+/* Источники данных: линии проводки и бегущие по ним данные. */
+.wire {
+  fill: none;
+  stroke: rgba(255, 140, 0, 0.35);
+  stroke-width: 1.6;
+  stroke-dasharray: 8 10;
+  stroke-dashoffset: 0;
+  opacity: 0;
+}
+.is-flowing .wire { animation: wire-in 0.5s ease forwards, wire-flow 1.6s linear 0.5s infinite; }
+@keyframes wire-in { to { opacity: 1; } }
+@keyframes wire-flow { to { stroke-dashoffset: -36; } }
+
+.wire-spark { fill: #ff8c00; opacity: 0; }
+.is-flowing .wire-spark { animation: spark-pulse 1.6s ease-in-out 0.6s infinite; }
+@keyframes spark-pulse {
+  0%, 100% { opacity: 0.35; r: 4; }
+  50% { opacity: 1; r: 6; }
+}
+
+.hub-step { opacity: 0; transform: translateY(8px); }
+.is-flowing .hub-step { animation: hub-in 0.5s var(--brake) forwards; }
+@keyframes hub-in { to { opacity: 1; transform: translateY(0); } }
+
+/* Reduced motion: hold every animation at its finished state. */
+@media (prefers-reduced-motion: reduce) {
+  .car-stroke { stroke-dashoffset: 0; }
+  .car-fill,
+  .car-glass,
+  .scan-pin,
+  .stamp-badge,
+  .lamp-status-good { opacity: 1; }
+  .scan-pin { transform: none; }
+  .scan-sweep,
+  .lamp-status-bad { opacity: 0; }
+  .gauge-needle { transform: rotate(var(--rest)); }
+  .lamp { color: theme('colors.accent.green'); border-color: rgba(34, 197, 94, 0.45); }
+  .light-from { background: #3a2b28; box-shadow: none; }
+  .dial-needle, .dial-fill { transition: none; }
+  .status-rail { background: #22c55e; }
+  .status-bad, .status-mid { opacity: 0; }
+  .status-ok { opacity: 1; }
+  .wire, .wire-spark { opacity: 1; }
+  .hub-step { opacity: 1; transform: none; }
+  .light-to { background: theme('colors.accent.green'); }
+  .headlight.is-lit .headlight-base { opacity: 1; }
+  .headlight-lit,
+  .headlight-hot { display: none; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
