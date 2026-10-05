@@ -27,6 +27,7 @@ app/
   globals.css           # дизайн-система (тёмная тема, бренд #E8431E)
   robots.ts, sitemap.ts # обе языковые версии
   api/lead/route.ts     # приём заявок → Telegram / Webhook / логи
+  .well-known/apple-app-site-association/route.ts  # пускает iOS-приложение к паскеям alemecohub.kz
 middleware.ts           # "/" → /ru или /kk (cookie → Accept-Language → ru)
 components/
   sections/             # Hero, Problem, Solution, Features, ServiceHistory,

@@ -30,5 +30,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|screens|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)"],
+  // .well-known must never get a locale prefix: Apple refuses a redirected
+  // apple-app-site-association, and passkeys in the app stop working.
+  matcher: ["/((?!api|_next|screens|\\.well-known|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)"],
 };
